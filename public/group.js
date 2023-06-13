@@ -23,6 +23,6 @@ socket.on("receiveMessage", function ({ name, mess }) {
 
 socket.on("disconnect", () => {
   var li = document.createElement("li");
-  li.textContent = yourname + " got disconnected the chat";
+  li.textContent = "You got disconnected the chat";
   document.getElementById("messages").appendChild(li);
 });

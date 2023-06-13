@@ -44,33 +44,6 @@ io.on("connection", (socket) => {
     io.emit("receiveMessage", { name: apka, mess: message });
   });
 
-  socket.on(
-    "privateMessage",
-    ({ name: apka, opponent: oid, mess: message }) => {
-      let targetOpponent = oid;
-      if (oid === null) {
-        targetOpponent = socket.id;
-      }
-      io.to(targetOpponent).emit("receivePrivateMessage", {
-        name: apka,
-        mess: message,
-      });
-    }
-  );
-
-  socket.on("sendInvitation", (socketId) => {
-    // Get the username associated with the sender's socket ID
-    const senderUsername = Users[socket.id];
-
-    // Find the socket object of the recipient using the provided socket ID
-    const recipientSocket = io.sockets.sockets.get(socketId);
-
-    if (recipientSocket) {
-      // Emit an "invitationReceived" event to the recipient socket
-      recipientSocket.emit("invitationReceived", senderUsername);
-    }
-  });
-
   socket.on("disconnect", () => {
     console.log(`User with id ${socket.id} disconnected`);
     io.emit("userDisconnected", Users[socket.id], Object.values(Users));
