@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Set Nickname</title>
+  </head>
+  <body>
+    <h1>Set Nickname</h1>
+
+    <form id="nicknameForm">
+      <label for="nicknameInput">Enter your nickname:</label>
+      <input type="text" id="nicknameInput" required />
+      <button type="submit">Set Nickname</button>
+    </form>
+
+    <form action="/chat">
+      <button type="submit">Join Chat</button>
+    </form>
+
+    <script>
+      function setNickname(event) {
+        event.preventDefault();
+
+        var nickname = document.getElementById("nicknameInput").value;
+        if (nickname.trim() !== "") {
+          document.cookie = "nickname=" + nickname + "; path=/";
+          alert("Nickname has been set successfully!");
+        } else {
+          alert("Invalid nickname. Please try again.");
+        }
+      }
+
+      document
+        .getElementById("nicknameForm")
+        .addEventListener("submit", setNickname);
+    </script>
+  </body>
+</html>

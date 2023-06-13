@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Chat Page</title>
+  </head>
+  <body onload="checkNickname()">
+    <h1>Chat Page</h1>
+
+    <div id="nicknameDisplay"></div>
+
+    <div>
+      <h2>Connected Users</h2>
+      <ul id="userList"></ul>
+      <button onclick="getlist()">Refresh</button>
+    </div>
+
+    <div>
+      <h2>Group Chat Room</h2>
+      <ul id="messages"></ul>
+      <form id="chatForm">
+        <input type="text" id="messageInput" autocomplete="off" />
+        <button type="submit">Send</button>
+      </form>
+    </div>
+
+    <div>
+      <h2>Personal Chat Room</h2>
+      <ul id="pmessages"></ul>
+      <form id="pchatForm">
+        <input type="text" id="pmessageInput" autocomplete="off" />
+        <button type="submit">Send</button>
+      </form>
+    </div>
+  </body>
+
+  <script>
+    var yourname = null;
+  </script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="chat1.js"></script>
+  <script src="group.js"></script>
+  <script src="personal.js"></script>
+  <script>
+    function displayUserList(users) {
+      var userListElement = document.getElementById("userList");
+      userListElement.innerHTML = "";
+      users.forEach(function (username) {
+        var li = document.createElement("li");
+        li.textContent = username;
+        var inviteButton = document.createElement("button");
+        inviteButton.textContent = "Invite";
+        inviteButton.addEventListener("click", function () {
+          sendInvitation(username);
+        });
+
+        li.appendChild(inviteButton);
+        userListElement.appendChild(li);
+      });
+    }
+
+    socket.on("userJoined", function (username, users) {
+      Update(username + " has joined the chat");
+      displayUserList(users);
+    });
+
+    socket.on("userDisconnected", function (username, users) {
+      Update(username + " has left the chat");
+      displayUserList(users);
+    });
+
+    function Update(message) {
+      var li = document.createElement("li");
+      li.textContent = message;
+      document.getElementById("messages").appendChild(li);
+    }
+  </script>
+</html>
