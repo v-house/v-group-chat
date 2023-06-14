@@ -3,17 +3,15 @@
   <head>
     <title>Chat Page</title>
   </head>
+  <link rel="stylesheet" href="styles.css" />
   <body onload="checkNickname()">
     <h1>Chat Page</h1>
-
     <div id="nicknameDisplay"></div>
-
     <div>
       <h2>Connected Users</h2>
       <ul id="userList"></ul>
-      <button onclick="getlist()">Refresh</button>
+      <button onclick="needlist()">Refresh</button>
     </div>
-
     <div>
       <h2>Group Chat Room</h2>
       <ul id="messages"></ul>
@@ -23,38 +21,111 @@
       </form>
     </div>
   </body>
-
-  <script>
-    var yourname = null;
-  </script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="chat1.js"></script>
   <script src="group.js"></script>
+  <script src="incoming.js"></script>
   <script>
-    function displayUserList(users) {
-      var userListElement = document.getElementById("userList");
-      userListElement.innerHTML = "";
-      users.forEach(function (username) {
-        var li = document.createElement("li");
-        li.textContent = username;
-        userListElement.appendChild(li);
-      });
+    function messageByYou(mess) {
+      var li = document.createElement("li");
+      li.classList.add("sent-by-you");
+
+      var header = document.createElement("div");
+      header.classList.add("message-header");
+
+      var senderName = document.createElement("span");
+      senderName.classList.add("sender-name");
+      senderName.textContent = yourname;
+
+      var time = document.createElement("span");
+      time.textContent = getTime();
+
+      header.appendChild(senderName);
+      header.appendChild(time);
+
+      var content = document.createElement("p");
+      content.textContent = mess;
+
+      li.appendChild(header);
+      li.appendChild(content);
+
+      li.style.backgroundColor = getRandomColor();
+      li.style.color = getFontColor(li.style.backgroundColor);
+
+      document.getElementById("messages").appendChild(li);
     }
 
-    socket.on("userJoined", function (username, users) {
-      Update(username + " has joined the chat");
-      displayUserList(users);
-    });
+    function messageByOtherUser(name, mess) {
+      var li = document.createElement("li");
+      li.classList.add("sent-by-other");
 
-    socket.on("userDisconnected", function (username, users) {
-      Update(username + " got disconnected from the chat");
-      displayUserList(users);
-    });
+      var header = document.createElement("div");
+      header.classList.add("message-header");
+
+      var senderName = document.createElement("span");
+      senderName.classList.add("sender-name");
+      senderName.textContent = name;
+
+      var time = document.createElement("span");
+      time.textContent = getTime();
+
+      header.appendChild(time);
+      header.appendChild(senderName);
+
+      var content = document.createElement("p");
+      content.textContent = mess;
+
+      li.appendChild(header);
+      li.appendChild(content);
+
+      li.style.backgroundColor = getRandomColor();
+      li.style.color = getFontColor(li.style.backgroundColor);
+
+      document.getElementById("messages").appendChild(li);
+    }
 
     function Update(message) {
       var li = document.createElement("li");
-      li.textContent = message;
+      li.classList.add("update");
+
+      var content = document.createElement("p");
+      content.textContent = message;
+
+      li.appendChild(content);
+
       document.getElementById("messages").appendChild(li);
+    }
+
+    // Helper function to generate random colors
+    function getRandomColor() {
+      var letters = "0123456789ABCDEF";
+      var color = "#";
+      for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
+
+    // Helper function to calculate the complementing font color
+    function getFontColor(backgroundColor) {
+      // Parse the background color values
+      var r = parseInt(backgroundColor.substr(1, 2), 16);
+      var g = parseInt(backgroundColor.substr(3, 2), 16);
+      var b = parseInt(backgroundColor.substr(5, 2), 16);
+
+      // Calculate the luminance of the background color
+      var luminance = (r * 0.299 + g * 0.587 + b * 0.114) / 255;
+
+      // Return black or white based on the luminance
+      return luminance > 0.5 ? "#000" : "#fff";
+    }
+
+    // Helper function to get the current time in HH:mm format
+    function getTime() {
+      var now = new Date();
+      var hours = now.getHours().toString().padStart(2, "0");
+      var minutes = now.getMinutes().toString().padStart(2, "0");
+      return hours + ":" + minutes;
     }
   </script>
 </html>

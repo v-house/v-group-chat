@@ -40,6 +40,10 @@ io.on("connection", (socket) => {
     io.emit("userJoined", username, Object.values(Users));
   });
 
+  socket.on("listusers", () => {
+    io.to(socket.id).emit("users", Object.values(Users));
+  });
+
   socket.on("sendMessage", ({ name: apka, mess: message }) => {
     io.emit("receiveMessage", { name: apka, mess: message });
   });
