@@ -53,13 +53,6 @@
     var li = document.createElement("li");
     li.classList.add("media", "mb-3", "align-items-center", "message-by-you", "p-2", "rounded", "bg-light");
 
-    // var avatar = document.createElement("img");
-    // avatar.classList.add("me-3", "rounded-circle");
-    // avatar.src =
-    //   "https://cataas.com/cat";
-    // avatar.style.width = "40px";
-    // avatar.style.height = "40px";
-
     var mediaBody = document.createElement("div");
     mediaBody.classList.add("media-body");
 
@@ -76,7 +69,6 @@
     var time = document.createElement("small");
     time.textContent = getTime();
 
-    senderInfo.appendChild(avatar);
     senderInfo.appendChild(senderName);
 
     header.appendChild(senderInfo);
@@ -98,13 +90,6 @@
     var li = document.createElement("li");
     li.classList.add("media", "mb-3", "align-items-center", "message-by-other", "p-2", "rounded", "bg-info");
 
-    // var avatar = document.createElement("img");
-    // avatar.classList.add("me-3", "rounded-circle");
-    // avatar.src =
-    //   "https://cataas.com/cat";
-    // avatar.style.width = "40px";
-    // avatar.style.height = "40px";
-
     var mediaBody = document.createElement("div");
     mediaBody.classList.add("media-body");
 
@@ -121,7 +106,6 @@
     var time = document.createElement("small");
     time.textContent = getTime();
 
-    senderInfo.appendChild(avatar);
     senderInfo.appendChild(senderName);
 
     header.appendChild(senderInfo);
@@ -156,5 +140,6 @@
     return hours + ":" + minutes;
   }
 </script>
+
 
 </html>
