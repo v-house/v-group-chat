@@ -1,131 +1,160 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Chat Page</title>
-  </head>
-  <link rel="stylesheet" href="styles.css" />
-  <body onload="checkNickname()">
-    <h1>Chat Page</h1>
-    <div id="nicknameDisplay"></div>
-    <div>
-      <h2>Connected Users</h2>
-      <ul id="userList"></ul>
-      <button onclick="needlist()">Refresh</button>
+
+<head>
+  <title>Chat Page</title>
+</head>
+<link rel="stylesheet" href="styles.css" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+  integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+<body onload="checkNickname()">
+  <nav class="navbar navbar-dark bg-dark">
+    <div class="container">
+      <h1 class="navbar-brand">Cat Everywhere</h1>
+      <div class="welcome-message">
+        <span id="nicknameDisplay" class="badge bg-primary fs-6"></span>
+      </div>
     </div>
-    <div>
-      <h2>Group Chat Room</h2>
-      <ul id="messages"></ul>
-      <form id="chatForm">
-        <input type="text" id="messageInput" autocomplete="off" />
-        <button type="submit">Send</button>
-      </form>
+  </nav>
+
+  <div class="container mt-4">
+    <div class="row">
+      <div class="col-md-2 me-2 border border-primary rounded p-3">
+        <h2 class="text-primary">Connected Users</h2>
+        <button class="btn btn-primary mb-3" onclick="needlist()">Refresh</button>
+        <ul id="userList" class="list-unstyled"></ul>
+      </div>
+      <div class="col-md-8 border border-primary rounded p-3">
+        <div class="head-chat text-center">
+          <h2 class="text-primary">Cat-Room</h2>
+        </div>
+        <div class="body-chat chat-body p-3">
+          <ul id="messages" class="list-unstyled"></ul>
+        </div>
+        <form id="chatForm" class="d-flex fixed-bottom mb-3 p-3">
+          <input type="text" id="messageInput" class="form-control me-2" autocomplete="off" />
+          <button type="submit" class="btn btn-primary">Send</button>
+        </form>
+      </div>
     </div>
-  </body>
-  <script src="/socket.io/socket.io.js"></script>
-  <script src="chat1.js"></script>
-  <script src="group.js"></script>
-  <script src="incoming.js"></script>
-  <script>
-    function messageByYou(mess) {
-      var li = document.createElement("li");
-      li.classList.add("sent-by-you");
+  </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+  integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+  integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="chat1.js"></script>
+<script src="group.js"></script>
+<script src="incoming.js"></script>
+<script>
+  function messageByYou(mess) {
+    var li = document.createElement("li");
+    li.classList.add("media", "mb-3", "align-items-center", "message-by-you", "p-2", "rounded", "bg-light");
 
-      var header = document.createElement("div");
-      header.classList.add("message-header");
+    var avatar = document.createElement("img");
+    avatar.classList.add("me-3", "rounded-circle");
+    avatar.src =
+      "https://gifdb.com/images/high/profile-pic-cute-white-cat-listening-to-music-pf8xt5gefio5elfr.gif";
+    avatar.style.width = "40px";
+    avatar.style.height = "40px";
 
-      var senderName = document.createElement("span");
-      senderName.classList.add("sender-name");
-      senderName.textContent = yourname;
+    var mediaBody = document.createElement("div");
+    mediaBody.classList.add("media-body");
 
-      var time = document.createElement("span");
-      time.textContent = getTime();
+    var header = document.createElement("div");
+    header.classList.add("d-flex", "justify-content-between");
 
-      header.appendChild(senderName);
-      header.appendChild(time);
+    var senderInfo = document.createElement("div");
+    senderInfo.classList.add("d-flex", "align-items-center");
 
-      var content = document.createElement("p");
-      content.textContent = mess;
+    var senderName = document.createElement("h6");
+    senderName.classList.add("mt-0", "mr-2", "text-primary");
+    senderName.textContent = yourname + " (You)";
 
-      li.appendChild(header);
-      li.appendChild(content);
+    var time = document.createElement("small");
+    time.textContent = getTime();
 
-      li.style.backgroundColor = getRandomColor();
-      li.style.color = getFontColor(li.style.backgroundColor);
+    senderInfo.appendChild(avatar);
+    senderInfo.appendChild(senderName);
 
-      document.getElementById("messages").appendChild(li);
-    }
+    header.appendChild(senderInfo);
+    header.appendChild(time);
 
-    function messageByOtherUser(name, mess) {
-      var li = document.createElement("li");
-      li.classList.add("sent-by-other");
+    var content = document.createElement("p");
+    content.classList.add("mb-0", "message-content");
+    content.textContent = mess;
 
-      var header = document.createElement("div");
-      header.classList.add("message-header");
+    mediaBody.appendChild(header);
+    mediaBody.appendChild(content);
 
-      var senderName = document.createElement("span");
-      senderName.classList.add("sender-name");
-      senderName.textContent = name;
+    li.appendChild(mediaBody);
 
-      var time = document.createElement("span");
-      time.textContent = getTime();
+    document.getElementById("messages").appendChild(li);
+  }
 
-      header.appendChild(time);
-      header.appendChild(senderName);
+  function messageByOtherUser(name, mess) {
+    var li = document.createElement("li");
+    li.classList.add("media", "mb-3", "align-items-center", "message-by-other", "p-2", "rounded", "bg-info");
 
-      var content = document.createElement("p");
-      content.textContent = mess;
+    var avatar = document.createElement("img");
+    avatar.classList.add("me-3", "rounded-circle");
+    avatar.src =
+      "https://www.warrenphotographic.co.uk/photgraphy/bigs/45772-silver-tabby-cat-profile-portrait.jpg";
+    avatar.style.width = "40px";
+    avatar.style.height = "40px";
 
-      li.appendChild(header);
-      li.appendChild(content);
+    var mediaBody = document.createElement("div");
+    mediaBody.classList.add("media-body");
 
-      li.style.backgroundColor = getRandomColor();
-      li.style.color = getFontColor(li.style.backgroundColor);
+    var header = document.createElement("div");
+    header.classList.add("d-flex", "justify-content-between");
 
-      document.getElementById("messages").appendChild(li);
-    }
+    var senderInfo = document.createElement("div");
+    senderInfo.classList.add("d-flex", "align-items-center");
 
-    function Update(message) {
-      var li = document.createElement("li");
-      li.classList.add("update");
+    var senderName = document.createElement("h6");
+    senderName.classList.add("mt-0", "mr-2", "text-primary");
+    senderName.textContent = name;
 
-      var content = document.createElement("p");
-      content.textContent = message;
+    var time = document.createElement("small");
+    time.textContent = getTime();
 
-      li.appendChild(content);
+    senderInfo.appendChild(avatar);
+    senderInfo.appendChild(senderName);
 
-      document.getElementById("messages").appendChild(li);
-    }
+    header.appendChild(senderInfo);
+    header.appendChild(time);
 
-    // Helper function to generate random colors
-    function getRandomColor() {
-      var letters = "0123456789ABCDEF";
-      var color = "#";
-      for (var i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-      }
-      return color;
-    }
+    var content = document.createElement("p");
+    content.classList.add("mb-0", "message-content");
+    content.textContent = mess;
 
-    // Helper function to calculate the complementing font color
-    function getFontColor(backgroundColor) {
-      // Parse the background color values
-      var r = parseInt(backgroundColor.substr(1, 2), 16);
-      var g = parseInt(backgroundColor.substr(3, 2), 16);
-      var b = parseInt(backgroundColor.substr(5, 2), 16);
+    mediaBody.appendChild(header);
+    mediaBody.appendChild(content);
 
-      // Calculate the luminance of the background color
-      var luminance = (r * 0.299 + g * 0.587 + b * 0.114) / 255;
+    li.appendChild(mediaBody);
 
-      // Return black or white based on the luminance
-      return luminance > 0.5 ? "#000" : "#fff";
-    }
+    document.getElementById("messages").appendChild(li);
+  }
 
-    // Helper function to get the current time in HH:mm format
-    function getTime() {
-      var now = new Date();
-      var hours = now.getHours().toString().padStart(2, "0");
-      var minutes = now.getMinutes().toString().padStart(2, "0");
-      return hours + ":" + minutes;
-    }
-  </script>
+  function Update(message) {
+    var li = document.createElement("li");
+    li.classList.add("update");
+
+    var content = document.createElement("p");
+    content.textContent = message;
+    li.appendChild(content);
+    document.getElementById("messages").appendChild(li);
+  }
+
+  function getTime() {
+    var now = new Date();
+    var hours = now.getHours().toString().padStart(2, "0");
+    var minutes = now.getMinutes().toString().padStart(2, "0");
+    return hours + ":" + minutes;
+  }
+</script>
+
 </html>
